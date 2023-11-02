@@ -1,0 +1,33 @@
+/* div h1{
+    font-size: 3.5rem;
+    margin-top: 10vh;
+    margin-left: 5vh;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    letter-spacing: 1.8px;
+    word-spacing: -1px;
+    color: #000000;
+    font-weight: normal;
+    text-decoration: none solid rgb(68, 68, 68);
+    font-style: italic;
+    font-variant: small-caps;
+    text-transform: none;
+}
+
+div input{
+    min-width: 300px;
+}
+
+div input:focus{
+    outline: none;
+    box-shadow: none;
+}
+
+div button{
+    text-decoration: none;
+    background-color: whitesmoke;
+    outline: none;
+    box-shadow: none;
+    border: 2px solid black;
+    margin: 0px 10px 0px 10px;
+    width: fit-content;
+} */
