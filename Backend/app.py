@@ -19,7 +19,7 @@ ercMin=0
 ercMax=0
 ercAvg=0
 
-def getErc(addr,ercMin,ercMax):
+def getErc(addr,ercMin,ercMax,ercAvg):
 
         valuesErc = f'{url}?module=account&action=tokentx&address={addr}&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey={api_key}'
         print(valuesErc)
@@ -31,20 +31,26 @@ def getErc(addr,ercMin,ercMax):
                 dict = response.json()
                 print("length of result ",len(dict["result"]))
                 print("type of result ",type(dict["result"]))
+                c=0
                 for i in range(len(dict["result"])):
+                        c=c+1
                         if dict["result"][i]["from"]==addr:
-                                print(int(dict["result"][i]["value"]))
+                                # print(int(dict["result"][i]["value"]))
                                 if int(dict["result"][i]["value"]) < ercMin:
                                         ercMin=int(dict["result"][i]["value"])
                                 
                                 if int(dict["result"][i]["value"]) > ercMax:
                                         ercMax=int(dict["result"][i]["value"])
-                                break
+                                
+                                ercAvg=ercAvg+int(dict["result"][i]["value"])
+                                
 
                                 
-                
+                ercAvg=ercAvg/c
+
                 print(ercMin)
                 print(ercMax)
+                print(ercAvg)
                                 
 
         else:
@@ -89,7 +95,7 @@ def prediction_func():
         if(request.json):
                 data = request.json
                 if(isValidAddress(data[1:-1])):
-                        getErc(data[1:-1],ercMin,ercMax)              
+                        getErc(data[1:-1],ercMin,ercMax,ercAvg)              
                         # transDetails(data[1:-1])
                         temp = X_Address.where(X_Address['Address'] == data[1:-1])
                         X_info = temp.dropna().iloc[:,0:44]
