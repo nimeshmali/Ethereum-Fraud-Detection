@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from joblib import load
 from web3 import Web3
 import requests
+import pandas as pd
 import sys
 import myKey as k
 # from ethereum_address import is_address
@@ -12,14 +13,57 @@ CORS(app)
 
 api_key = k.my_eth_key
 url = "https://api.etherscan.io/api"
-tempAdd = "0x4e83362442b8d1bec281594cea3050c8eb01311c"
-transFromAccount = 0
 
-ercMin=0
-ercMax=0
-ercAvg=0
+features = {
+        "avgMinSentTnx":[0],
+        "avgMinRecTnx":[0],
+        "timeFirstLastTnx":[0],
+        "transFrom":[0],
+        "transTo":[0],
+        "createdCont":[0],
+        "uniqRecAdd":[0],
+        "uniqSentAdd":[0],
+        "minValRec":[0],
+        "maxValRec":[0],
+        "avgValRec":[0],
+        "minValSent":[0],
+        "maxValSent":[0],
+        "avgValSent":[0],
+        "minSentToCont":[0],
+        "maxSentToCont":[0],
+        "avgSentToCont":[0],
+        "totalTnx":[0],
+        'totalEtherSent':[0],
+        "totalEtherRec":[0],
+        "totalEtherSentcCont":[0],
+        "totalEtherBal":[0],
+        "totalErcTrans":[0],
+        "totalErcEtherRec":[0],
+        "totalErcEtherSent":[0],
+        "totalErcEtherSentCont":[0],
+        "ercUniqSentAddr":[0],
+        "ercUniqRecAddr":[0],
+        "ercUniqSentAddr1":[0],
+        "ercUniqRecCont":[0],
+        "ercAvgTimeSentTnx":[0],
+        "ercAvgTimeRecTnx":[0],
+        "ercAvgTimeRec2Tnx":[0],
+        "ercAvgTimeContTnx":[0],
+        "ercMinRec":[0],
+        "ercMaxRec":[0],
+        "ercAvgRec":[0],
+        "ercMinSent":[0],
+        "ercMaxSent":[0],
+        "ercAvgSent":[0],
+        "ercMinValSentCont":[0],
+        "ercMaxValSentCont":[0],
+        "ercAvgValSentCont":[0],
+        "ercUniqSentToken":[0],
 
-def getErc(addr,ercMin,ercMax,ercAvg):
+}
+
+
+def getErc(addr,features):
 
         valuesErc = f'{url}?module=account&action=tokentx&address={addr}&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey={api_key}'
         print(valuesErc)
@@ -32,39 +76,73 @@ def getErc(addr,ercMin,ercMax,ercAvg):
                 print("length of result ",len(dict["result"]))
                 print("type of result ",type(dict["result"]))
                 c=0
+                b=0
+                features["totalErcTrans"][0]=len(dict["result"])
                 for i in range(len(dict["result"])):
-                        c=c+1
                         if dict["result"][i]["from"]==addr:
+                                c=c+1
+
                                 # print(int(dict["result"][i]["value"]))
-                                if int(dict["result"][i]["value"]) < ercMin:
-                                        ercMin=int(dict["result"][i]["value"])
+                                if int(dict["result"][i]["value"]) < features["ercMinSent"][0]:
+                                        features["ercMinSent"][0]=int(dict["result"][i]["value"])
                                 
-                                if int(dict["result"][i]["value"]) > ercMax:
-                                        ercMax=int(dict["result"][i]["value"])
+                                if int(dict["result"][i]["value"]) > features["ercMaxSent"][0]:
+                                        features["ercMaxSent"][0]=int(dict["result"][i]["value"])
                                 
-                                ercAvg=ercAvg+int(dict["result"][i]["value"])
+                                features["ercAvgSent"][0]=features["ercAvgSent"][0]+int(dict["result"][i]["value"])
+                        else:
+                                b=b+1
+                                if int(dict["result"][i]["value"]) < features["ercMinRec"][0]:
+                                        features["ercMinRec"][0]=int(dict["result"][i]["value"])
+                                
+                                if int(dict["result"][i]["value"]) > features["ercMaxRec"][0]:
+                                        features["ercMaxRec"][0]=int(dict["result"][i]["value"])
+                                
+                                features["ercAvgRec"][0]=features["ercAvgRec"][0]+int(dict["result"][i]["value"])
                                 
 
                                 
-                ercAvg=ercAvg/c
+                if c>0:
+                        features["ercAvgSent"][0]=features["ercAvgSent"][0]/c
+                if b>0:
+                        features["ercAvgRec"][0]=features["ercAvgRec"][0]/b
 
-                print(ercMin)
-                print(ercMax)
-                print(ercAvg)
+                print(features["ercMinSent"][0])
+                print(features["ercMaxSent"][0])
+                print(features["ercAvgSent"][0])
+                print(features["ercMinRec"][0])
+                print(features["ercMaxRec"][0])
+                print(features["ercAvgRec"][0])
+                print(features["totalErcTrans"][0])
                                 
 
         else:
-                print("gg krdis")
-        
+                print("error occured")
 
+def trans(addr,features):
+        valuesErc = f'{url}?module=account&action=txlist&address={addr}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey={api_key}'
+        # print(valuesErc)
+        print("transactionn related info below")
+        print("addr",(addr))
+        response=requests.get(valuesErc)
+        if response.status_code==200:
+                print("ho gyis two")
+                print(type(response.json()))
+                dict = response.json()
+                print("length of result ",len(dict["result"]))
+                features["totalTnx"][0]=len(dict["result"])        
+                print("type of result ",type(dict["result"]))
+                for i in range(len(dict["result"])):
+                        if dict["result"][i]["from"]==addr:
+                                features["transFrom"][0]=features["transFrom"][0]+1
+                        else:
+                                features["transTo"][0]=features["transTo"][0]+1
+                print(features["transFrom"][0])
+                print(features["transTo"][0])
+        else:
+                print("error occured")
 
-
-# def transDetails(addr):
-#         w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/1bfa363ce82540c99d1097ed2db155e3'))
-#         if w3.is_connected():
-#                 transFromAccount=w3.eth.get_transaction_count(addr)
-#                 print(transFromAccount)
-#                 print("connected")
+                        
 
 
 def isValidAddress(add):
@@ -75,6 +153,27 @@ def isValidAddress(add):
     return False
 
 
+def getData(data, X_Address, X_info, features):
+        print("aa gaya")
+        print(X_Address)
+        temp = pd.DataFrame()
+        temp = X_Address.where(X_Address['Address'] == data)
+        # print(temp.isna().sum())
+        print(temp)
+        if temp.iloc[:, 0].isna().sum()==9840:
+                # X_info = temp.dropna().iloc[:,0:44]
+                print("jojo")
+                # temp = X_Address.where(X_Address['Address'] == data[1:-1])
+                X_info = temp.dropna().iloc[:,0:44]
+        elif temp.shape == (9841,45):
+                print("ha bhai empty hai")
+                temp = pd.DataFrame.from_dict(features)
+                X_info=temp
+           
+        print(X_info)
+        print(type(X_info))
+        return X_info
+
 
 
 clf = load('D:\eth_fraud_detect\Ethereum-Fraud-Detection\Backend\Ethereum_Fraud_Detection.joblib')
@@ -82,6 +181,7 @@ X_Address = load('D:\eth_fraud_detect\Ethereum-Fraud-Detection\Backend\X_Address
 # file = open('model_pickle', 'rb')
 # clf = pickle.load(file)
 
+X_info=pd.DataFrame()
 
 
 @app.route('/predict', methods=["POST"])
@@ -95,12 +195,14 @@ def prediction_func():
         if(request.json):
                 data = request.json
                 if(isValidAddress(data[1:-1])):
-                        getErc(data[1:-1],ercMin,ercMax,ercAvg)              
-                        # transDetails(data[1:-1])
-                        temp = X_Address.where(X_Address['Address'] == data[1:-1])
-                        X_info = temp.dropna().iloc[:,0:44]
+                        getErc(data[1:-1],features)   
+                        trans(data[1:-1],features)  
+                        Z_info=getData(data[1:-1],X_Address,X_info,features)
+                        print("********")
+                        print(Z_info)
+                        
                         # print(X_info) #get information related to that data point 
-                        prediction = clf.predict_proba(X_info)
+                        prediction = clf.predict_proba(Z_info)
                         response = jsonify({"result": str(prediction[0][0])})
                         print("preiction[0][0] ",prediction[0][0])
                         print(response, "  response is given")
