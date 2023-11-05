@@ -12,6 +12,8 @@ const Meter = ({ fraud }) => {
     threat = "Safe account";
   }
   console.log(threat);
+  let prob = (1 - fraud).toFixed(3);
+
 
   return (
     <div className='mt-[4em] flex flex-col items-center w-full Poppins meter'>
@@ -66,9 +68,7 @@ const Meter = ({ fraud }) => {
 
         ]}
       />
-      <h3 className='text-white text-center font-bold Poppins'>{threat}</h3>
-
-
+      <h3 className='text-white text-center font-bold Poppins'>Probablity of this Account being Fraudulent is {prob}</h3>
     </div>
   )
 }
