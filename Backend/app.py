@@ -4,7 +4,6 @@ from joblib import load
 from web3 import Web3
 import requests
 import pandas as pd
-import sys
 import myKey as k
 # from ethereum_address import is_address
 # Initializing flask app
@@ -172,7 +171,16 @@ def trans(addr,features):
         else:
                 print("error occured")
 
-                        
+
+def giveEtherBal(addr,features):
+        values = f"{url}?module=account&action=balancemulti&address={addr}&tag=latest&apikey={api_key}"  
+        response = requests.get(values)
+        if response.status_code == 200:
+                dict=response.json()
+                features["totalEtherBal"][0]=int(dict["result"][0]["balance"]) 
+                print("total ether balence ",features["totalEtherBal"][0])
+
+
 
 
 def isValidAddress(add):
@@ -211,7 +219,6 @@ X_Address = load('D:\eth_fraud_detect\Ethereum-Fraud-Detection\Backend\X_Address
 # file = open('model_pickle', 'rb')
 # clf = pickle.load(file)
 
-X_info=pd.DataFrame()
 
 
 @app.route('/predict', methods=["POST"])
@@ -227,6 +234,9 @@ def prediction_func():
                 if(isValidAddress(data[1:-1])):
                         getErc(data[1:-1],features)   
                         trans(data[1:-1],features)  
+                        giveEtherBal(data[1:-1],features)
+                        X_info=pd.DataFrame()
+
                         Z_info=getData(data[1:-1],X_Address,X_info,features)
                         print("********")
                         print(Z_info)
