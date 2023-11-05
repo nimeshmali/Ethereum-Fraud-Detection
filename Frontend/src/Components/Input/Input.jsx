@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Meter from "../Meter/Meter"
 import Invalid from '../Invalid'
 import Valid from '../../Valid';
+import Loading from '../Loading';
 //CSS Files
 // import "./input.css"
 
@@ -11,8 +12,10 @@ const Input = (props) => {
   const [address, setAddress] = useState("");
   const [fraud, setFraud] = useState(-2)
   const data = props.data;
+  const [ld, setld] = useState(false);
 
   const handlePrediction = async () => {
+    setld(true);
     await fetch("http://127.0.0.1:5000/predict", {
       method: 'POST',
       headers: {
@@ -26,6 +29,7 @@ const Input = (props) => {
       setFraud(vari.result);
       console.log(fraud);
     })
+    setld(false);
     // console.log(fraud);
   }
 
@@ -37,7 +41,7 @@ const Input = (props) => {
         <input className='w-1/2 p-2 rounded-sm input font-bold bg-slate-800 text-white' type="text" placeholder='Address' onChange={(e) => { setAddress(JSON.stringify(e.target.value)) }} required="required" />
         <button className='mx-2 p-2 text-white bg-cyan-600 rounded md font-bold' onClick={handlePrediction} >Predict</button>
       </div>
-      {fraud == -2 ? <Valid /> : fraud != -1 ? < Meter fraud={fraud} /> : <Invalid />}
+      {ld ? <Loading /> : fraud == -2 ? <Valid /> : fraud != -1 ? < Meter fraud={fraud} /> : <Invalid />}
     </div>
   )
 }

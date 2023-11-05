@@ -132,13 +132,43 @@ def trans(addr,features):
                 print("length of result ",len(dict["result"]))
                 features["totalTnx"][0]=len(dict["result"])        
                 print("type of result ",type(dict["result"]))
+                b=0
+                c=0
                 for i in range(len(dict["result"])):
                         if dict["result"][i]["from"]==addr:
+                                c=c+1
                                 features["transFrom"][0]=features["transFrom"][0]+1
+                                if int(dict["result"][i]["value"]) < features["minValSent"][0]:
+                                        features["minValSent"][0]=int(dict["result"][i]["value"])
+                                
+                                if int(dict["result"][i]["value"]) > features["maxValSent"][0]:
+                                        features["maxValSent"][0]=int(dict["result"][i]["value"])
+                                
+                                features["avgValSent"][0]=features["avgValSent"][0]+int(dict["result"][i]["value"])
                         else:
+                                b=b+1
                                 features["transTo"][0]=features["transTo"][0]+1
+                                if int(dict["result"][i]["value"]) < features["minValRec"][0]:
+                                        features["minValRec"][0]=int(dict["result"][i]["value"])
+                                
+                                if int(dict["result"][i]["value"]) > features["maxValRec"][0]:
+                                        features["maxValRec"][0]=int(dict["result"][i]["value"])
+                                
+                                features["avgValRec"][0]=features["avgValRec"][0]+int(dict["result"][i]["value"])
+                if c>0:
+                        features["avgValSent"][0]=features["avgValSent"][0]/c
+                if b>0:
+                        features["avgValRec"][0]=features["avgValRec"][0]/b
+                        
+
                 print(features["transFrom"][0])
                 print(features["transTo"][0])
+                print(features["minValSent"][0])
+                print(features["maxValSent"][0])
+                print(features["avgValSent"][0])
+                print(features["minValRec"][0])
+                print(features["maxValRec"][0])
+                print(features["avgValRec"][0])
         else:
                 print("error occured")
 
