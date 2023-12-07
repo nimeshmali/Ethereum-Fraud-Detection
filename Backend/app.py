@@ -172,7 +172,7 @@ def trans(addr,features):
                 print("error occured")
 
 
-def giveEtherBal(addr,features):
+def giveEther(addr,features):
         values = f"{url}?module=account&action=balancemulti&address={addr}&tag=latest&apikey={api_key}"  
         response = requests.get(values)
         if response.status_code == 200:
@@ -200,11 +200,11 @@ def getData(data, X_Address, X_info, features):
         print(temp)
         if temp.iloc[:, 0].isna().sum()==9840:
                 # X_info = temp.dropna().iloc[:,0:44]
-                print("jojo")
+                # print("jojo")
                 # temp = X_Address.where(X_Address['Address'] == data[1:-1])
                 X_info = temp.dropna().iloc[:,0:44]
         elif temp.shape == (9841,45):
-                print("ha bhai empty hai")
+                # print("ha bhai empty hai")
                 temp = pd.DataFrame.from_dict(features)
                 X_info=temp
            
@@ -234,7 +234,7 @@ def prediction_func():
                 if(isValidAddress(data[1:-1])):
                         getErc(data[1:-1],features)   
                         trans(data[1:-1],features)  
-                        giveEtherBal(data[1:-1],features)
+                        giveEther(data[1:-1],features)
                         X_info=pd.DataFrame()
 
                         Z_info=getData(data[1:-1],X_Address,X_info,features)

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Meter from "../Meter/Meter"
 import Invalid from '../Invalid'
-import Valid from '../../Valid';
+import Valid from '../Valid';
 import Loading from '../Loading';
 //CSS Files
 // import "./input.css"
@@ -30,7 +30,7 @@ const Input = (props) => {
       console.log(fraud);
     })
     setld(false);
-    // console.log(fraud);
+    // console.log(fraud); 
   }
 
 

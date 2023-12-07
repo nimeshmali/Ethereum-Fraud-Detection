@@ -1,48 +1,40 @@
 import React from 'react'
 import ReactSpeedometer from "react-d3-speedometer"
-import { BiUpArrow } from "react-icons/bi"
 
 let threat = "";
 
-const Meter = ({ fraud }) => {
-  if (fraud <= 0.4) {
+const Meter = (props) => {
+  if (props.fraud <= 0.4) {
     threat = "Fraudulent account";
   }
-  else if (fraud >= 0.6) {
+  else if (props.fraud >= 0.6) {
     threat = "Safe account";
   }
   console.log(threat);
-  let prob = (1 - fraud).toFixed(3);
+  let prob = (1 - props.fraud).toFixed(3);
 
 
   return (
     <div className='mt-[4em] flex flex-col items-center w-full Poppins meter'>
-      {/* <div className='w-[100%] flex flex-col items-center'>
-        <div className='Poppins w-[50%] h-[3em] rounded-full flex justify-between items-center bg-gradient-to-r from-green-400 to-red-400'>
-        <h1 className='pl-4'>0</h1>
-        <h1>0.5</h1>
-        <h1 className='pr-4'>1</h1>
-        </div>
-        </div>      
-        <div className='w-[70%]'>
-            <BiUpArrow className={`text-[25px] ml-[${temp}%] text-white`}/>
-            <h1 className={`text-white ml-[${temp}%]`}>{temp2}</h1>
-        </div> */}
       <ReactSpeedometer
         width={500}
         height={300}
         minValue={0}
         maxValue={1}
-        value={fraud}
+        value={prob}
         currentValueText="Fraud Index"
+        segmentColors={['#6ad72d', '#aee228', '#ecdb23', '#f6961e', '#ff471a']}
         customSegmentLabels={[
+
+
           {
-            text: "Fraudulent",
+            text: "Very Safe",
             position: "INSIDE",
             color: "black",
+            backgroundColor: "#fff"
           },
           {
-            text: "Unsafe",
+            text: "Safe",
             position: "INSIDE",
             color: "black",
           },
@@ -52,20 +44,16 @@ const Meter = ({ fraud }) => {
             color: "black",
             fontSize: "15px",
           },
-
           {
-            text: "Safe",
+            text: "Unsafe",
             position: "INSIDE",
             color: "black",
           },
           {
-            text: "Very Safe",
+            text: "Fraudulent",
             position: "INSIDE",
             color: "black",
           },
-
-
-
         ]}
       />
       <h3 className='text-white text-center font-bold Poppins'>Probablity of this Account being Fraudulent is {prob}</h3>
