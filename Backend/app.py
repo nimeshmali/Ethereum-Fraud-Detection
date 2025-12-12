@@ -13,6 +13,7 @@ CORS(app)
 api_key = k.my_eth_key
 url = "https://api.etherscan.io/api"
 
+
 features = {
         "avgMinSentTnx":[0],
         "avgMinRecTnx":[0],
