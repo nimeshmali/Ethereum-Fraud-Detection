@@ -4,14 +4,25 @@ from joblib import load
 from web3 import Web3
 import requests
 import pandas as pd
-import myKey as k
-# from ethereum_address import is_address
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 # Initializing flask app
 app = Flask(__name__)
 CORS(app) 
 
-api_key = k.my_eth_key
+# Get API key from environment variable
+api_key = os.getenv('my_eth_key')
+
+# Validate API key exists
+if not api_key:
+    raise ValueError("API key 'my_eth_key' not found in .env file")
+
 url = "https://api.etherscan.io/api"
+
 
 features = {
         "avgMinSentTnx":[0],
